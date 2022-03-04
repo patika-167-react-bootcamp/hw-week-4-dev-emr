@@ -49,6 +49,7 @@ interface props {
 }
 function TodoPage(props: props) {
   const [todos, setTodos] = React.useState([] as any[]);
+  const [isLoading, setIsLoading] = React.useState(true);
   const [categories, setCategories] = React.useState([] as any[]);
   const [renderTodos, setRenderTodos] = React.useState([] as any[]);
   const [secondary, setSecondary] = React.useState(false);
@@ -88,12 +89,13 @@ function TodoPage(props: props) {
         setStatuses((prevState) => [...prevState, statuses[i].value.data]);
       }
     }
+    setIsLoading(false);
   };
 
   const statesValid = !todos.length || !categories.length;
 
   function conditionalTodoPageRender() {
-    if (statesValid) {
+    if (isLoading) {
       return <LoadingIcon />;
     } else {
       return (
