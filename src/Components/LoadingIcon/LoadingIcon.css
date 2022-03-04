@@ -1,0 +1,59 @@
+.loading-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 150px
+}
+
+
+
+@keyframes ldio-1jgcj988r47-o {
+    0%    { opacity: 1; transform: translate(0 0) }
+   49.99% { opacity: 1; transform: translate(40px,0) }
+   50%    { opacity: 0; transform: translate(40px,0) }
+  100%    { opacity: 0; transform: translate(0,0) }
+}
+@keyframes ldio-1jgcj988r47 {
+    0% { transform: translate(0,0) }
+   50% { transform: translate(40px,0) }
+  100% { transform: translate(0,0) }
+}
+.ldio-1jgcj988r47 div {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  top: 30px;
+  left: 10px;
+}
+.ldio-1jgcj988r47 div:nth-child(1) {
+  background: #f57c00;
+  animation: ldio-1jgcj988r47 1s linear infinite;
+  animation-delay: -0.5s;
+}
+.ldio-1jgcj988r47 div:nth-child(2) {
+  background: #1976d2;
+  animation: ldio-1jgcj988r47 1s linear infinite;
+  animation-delay: 0s;
+}
+.ldio-1jgcj988r47 div:nth-child(3) {
+  background: #f57c00;
+  animation: ldio-1jgcj988r47-o 1s linear infinite;
+  animation-delay: -0.5s;
+}
+.loadingio-spinner-dual-ball-ommydqhsyvi {
+  width: 94px;
+  height: 94px;
+  display: inline-block;
+  overflow: hidden;
+  background: transparent
+}
+.ldio-1jgcj988r47 {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(0.94);
+  backface-visibility: hidden;
+  transform-origin: 0 0; 
+}
+.ldio-1jgcj988r47 div { box-sizing: content-box; }
