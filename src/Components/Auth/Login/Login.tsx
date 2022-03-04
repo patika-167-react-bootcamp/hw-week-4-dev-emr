@@ -14,12 +14,19 @@ import { useFormType } from "./useForm";
 import axios from "../../../api/axios";
 import { useContext } from "react";
 import LoadingIcon from "../../LoadingIcon/LoadingIcon";
+import { useNavigate } from "react-router-dom";
 
 const LOGIN_URL = "/auth/login";
 
 const theme = createTheme();
 
-export default function SignIn() {
+interface props {
+  authenticate: any;
+  setToken: any;
+}
+
+export default function SignIn(props: props) {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
   const form: useFormType = useForm();
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -40,10 +47,9 @@ export default function SignIn() {
       const accessToken = response?.data?.token;
       const name = response?.data?.username;
       const id = response?.data?.id;
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("name", name);
-      localStorage.setItem("id", id);
-      setIsLoading(false);
+      props.setToken(accessToken);
+      props.authenticate();
+      navigate("/todos");
     } catch (err) {
       setIsLoading(false);
       throw new Error("Error!");
@@ -112,7 +118,6 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              href="/todos"
             >
               Sign in
             </Button>

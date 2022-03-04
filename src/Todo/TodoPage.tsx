@@ -21,6 +21,7 @@ import ListItemText from "@mui/material/ListItemText";
 import IconButton from "@mui/material/IconButton";
 import TodoFilter from "./TodoFilter";
 import LoadingIcon from "../Components/LoadingIcon/LoadingIcon";
+import { Link } from "react-router-dom";
 
 export interface TodoList {
   title: string;
@@ -42,20 +43,22 @@ const theme = createTheme({
     },
   },
 });
-const accessToken = localStorage.getItem("token");
-const authAxios = axios.create({
-  baseURL: "http://localhost:80/",
-  headers: {
-    Authorization: `Bearer ${accessToken}`,
-  },
-});
-function TodoPage() {
+
+interface props {
+  token: any;
+}
+function TodoPage(props: props) {
   const [todos, setTodos] = React.useState([] as any[]);
   const [categories, setCategories] = React.useState([] as any[]);
   const [renderTodos, setRenderTodos] = React.useState([] as any[]);
   const [secondary, setSecondary] = React.useState(false);
   const [statuses, setStatuses] = React.useState([] as any[]);
-
+  const authAxios = axios.create({
+    baseURL: "http://localhost:80/",
+    headers: {
+      Authorization: `Bearer ${props.token}`,
+    },
+  });
   React.useEffect(() => {
     let abortController = new AbortController();
     fetchData();
@@ -107,6 +110,7 @@ function TodoPage() {
             setStatuses={setStatuses}
             categories={categories}
             setRenderTodos={setRenderTodos}
+            token={props.token}
           />
           <ThemeProvider theme={theme}>
             <Container component="main" maxWidth="md">
@@ -150,15 +154,20 @@ function TodoPage() {
                         key={item.id}
                         secondaryAction={
                           <Stack direction="row" spacing={1}>
-                            <Chip
-                              label={
-                                categories.find(
-                                  (category: any) =>
-                                    category.id == item.categoryId
-                                ).title
-                              }
-                              variant="outlined"
-                            />
+                            {categories.find(
+                              (category: any) => category.id == item.categoryId
+                            ) ? (
+                              <Chip
+                                label={
+                                  categories.find(
+                                    (category: any) =>
+                                      category.id == item.categoryId
+                                  ).title
+                                }
+                                variant="outlined"
+                              />
+                            ) : null}
+
                             {statuses.find(
                               (status: any) => status.id == item.statusId
                             ) ? (
@@ -227,9 +236,13 @@ function TodoPage() {
                   fullWidth
                   variant="contained"
                   sx={{ mt: 3, mb: 2, mx: 1 }}
-                  href="/editcategory"
                 >
-                  Edit Categories
+                  <Link
+                    to="/editcategory"
+                    style={{ textDecoration: "none", color: "white" }}
+                  >
+                    Edit Categories
+                  </Link>
                 </Button>
               </Box>
             </Container>

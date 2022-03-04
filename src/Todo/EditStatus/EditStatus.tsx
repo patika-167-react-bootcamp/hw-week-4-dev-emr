@@ -43,10 +43,12 @@ const theme = createTheme({
     },
   },
 });
-
+interface props {
+  token: any;
+}
 const CREATE_STATUS_URL = "/status";
 
-export default function EditStatus() {
+export default function EditStatus(props: props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -57,16 +59,15 @@ export default function EditStatus() {
   const [selectColor, setSelectColor] = React.useState<string>();
   let { id } = useParams();
 
-  const accessToken = localStorage.getItem("token");
   const authAxios = axios.create({
     baseURL: "http://localhost:80/",
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${props.token}`,
     },
   });
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer ${props.token}`,
   };
   const data = {
     title: form.values.title,
@@ -131,7 +132,7 @@ export default function EditStatus() {
   React.useEffect(() => {
     fetchStatus();
   }, []);
- 
+
   const conditionalStatusPageRender = () => {
     if (isLoading && statusList.length == 0) {
       return <LoadingIcon />;

@@ -15,6 +15,7 @@ import SignIn from "../../Components/Auth/Login/Login";
 import useForm from "./useForm";
 import { useFormType } from "./useForm";
 import axios1 from "../../api/axios";
+import { Link } from "react-router-dom";
 
 const theme = createTheme();
 const EDIT_CATEGORY_URL = "/category";
@@ -22,23 +23,24 @@ const EDIT_CATEGORY_URL = "/category";
 interface category {
   id: number;
 }
-
-export default function EditCategories() {
+interface props {
+  token: any;
+}
+export default function EditCategories(props:props) {
   const form: useFormType = useForm();
   const [isLoading, setIsLoading] = React.useState(true);
   const [secondary, setSecondary] = React.useState(false);
   const [dense, setDense] = React.useState(false);
   const [categories, setCategories] = React.useState([] as any[]);
-  const accessToken = localStorage.getItem("token");
   const authAxios = axios.create({
     baseURL: "http://localhost:80/",
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${props.token}`,
     },
   });
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer ${props.token}`,
   };
   const data = {
     title: form.values.title,
@@ -75,7 +77,7 @@ export default function EditCategories() {
   React.useEffect(() => {
     fetchCategories();
   }, []);
- 
+
   const conditionalEditCategoryPageRender = () => {
     if (isLoading) {
       return <LoadingIcon />;
@@ -155,9 +157,10 @@ export default function EditCategories() {
                                 sx={{ mt: 3, mb: 2, mx: 1 }}
                                 color="warning"
                                 onClick={clickEvent}
-                                href={`/editstatus/${category.id}`}
                               >
-                                Edit Status
+                                <Link to={`/editstatus/${category.id}`} style={{ textDecoration: "none", color: "white" }}>
+                                  Edit Status
+                                </Link>
                               </Button>
                             </ThemeProvider>
                           }

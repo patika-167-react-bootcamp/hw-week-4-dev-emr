@@ -8,19 +8,62 @@ import SignIn from "./Components/Auth/Login/Login";
 import TodoPage from "./Todo/TodoPage";
 import EditCategories from "./Todo/EditCategory/EditCategory";
 import EditStatus from "./Todo/EditStatus/EditStatus";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 function App() {
+  const [user, setUser] = useState(false);
+  const [token, setToken] = useState();
   return (
     <>
       <Router>
-        <Navbar />
+        <Navbar user={user} logout={() => setUser(false)} />
+
         <Routes>
-          <Route path="/login" element={<SignIn />} />
-          <Route path="/register" element={<SignUp />} />
-          <Route path="/todos" element={<TodoPage />} />
-          <Route path="/editstatus/:id" element={<EditStatus />} />
-          <Route path="/editcategory" element={<EditCategories />} />
+          {!user && (
+            <>
+              <Route
+                path="/login"
+                element={
+                  <SignIn
+                    authenticate={() => setUser(true)}
+                    setToken={setToken}
+                  />
+                }
+              />
+
+              <Route
+                path="/register"
+                element={
+                  <SignUp
+                    authenticate={() => setUser(true)}
+                    setToken={setToken}
+                  />
+                }
+              />
+            </>
+          )}
+          {user && (
+            <>
+              <Route path="/todos" element={<TodoPage token={token} />} />
+              <Route
+                path="/editstatus/:id"
+                element={<EditStatus token={token} />}
+              />
+              <Route
+                path="/editcategory"
+                element={<EditCategories token={token} />}
+              />
+            </>
+          )}
+          <Route
+            path="*"
+            element={<Navigate to={user ? "/todos" : "/login"} />}
+          />
         </Routes>
       </Router>
     </>

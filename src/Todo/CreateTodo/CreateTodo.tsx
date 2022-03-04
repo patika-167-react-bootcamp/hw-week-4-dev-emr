@@ -26,6 +26,7 @@ interface props {
   categories: any[];
   setStatuses: React.Dispatch<React.SetStateAction<any[]>>;
   setRenderTodos: React.Dispatch<React.SetStateAction<any[]>>;
+  token: any;
 }
 
 export default function CreateTodo(props: props) {
@@ -36,10 +37,10 @@ export default function CreateTodo(props: props) {
 
   const createTodoFormValid =
     !form.values.title?.length || !selectCategory || !selectStatus;
-  const accessToken = localStorage.getItem("token");
+
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer ${props.token}`,
   };
   const data = {
     title: form.values.title,
@@ -50,7 +51,7 @@ export default function CreateTodo(props: props) {
   const authAxios = axios1.create({
     baseURL: "http://localhost:80/",
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${props.token}`,
     },
   });
   const fetchStatuses = async () => {

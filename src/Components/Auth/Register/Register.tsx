@@ -12,13 +12,17 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormType } from "./useForm";
 import useForm from "./useForm";
 import axios from "../../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 const REGISTER_URL = "/auth/register";
-
-export default function SignUp() {
+interface props {
+  authenticate: any;
+  setToken: any;
+}
+export default function SignUp(props: props) {
   const form: useFormType = useForm();
-
+  const navigate = useNavigate();
   const registerFormValid =
     !form.values.username?.length ||
     !form.values.password?.length ||
@@ -41,9 +45,9 @@ export default function SignUp() {
       const accessToken = response?.data?.token;
       const name = response?.data?.username;
       const id = response?.data?.id;
-      localStorage.setItem("token", accessToken);
-      localStorage.setItem("name", name);
-      localStorage.setItem("id", id);
+      props.setToken(accessToken);
+      props.authenticate();
+      navigate("todos");
     } catch (error: any) {
       console.log(error.response.data);
     }
@@ -124,7 +128,6 @@ export default function SignUp() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
               disabled={registerFormValid}
-              href="/todos"
             >
               Sign Up
             </Button>

@@ -19,8 +19,11 @@ const theme = createTheme({
     },
   },
 });
-
-const Navbar = () => {
+interface props {
+  user: boolean;
+  logout: any;
+}
+const Navbar = (props: props) => {
   const username: string | null = window.localStorage.getItem("name");
   const logout = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -31,20 +34,19 @@ const Navbar = () => {
   };
 
   function conditionalRender() {
-    if (window.localStorage.getItem("token")) {
+    if (props.user) {
       return (
         <Button
-          href="/login"
           variant="outlined"
           color="warning"
-          onClick={logout}
+          onClick={props.logout}
           sx={{ my: 1 }}
         >
-          Logout from {username}
+          Logout
         </Button>
       );
     }
-    if (!window.localStorage.getItem("token")) {
+    if (!props.user) {
       return (
         <>
           <Button
@@ -53,7 +55,12 @@ const Navbar = () => {
             color="warning"
             sx={{ my: 1 }}
           >
-            <Linknew style={{textDecoration: "none", color: "#f57c00"}} to="/register">Register</Linknew>
+            <Linknew
+              style={{ textDecoration: "none", color: "#f57c00" }}
+              to="/register"
+            >
+              Register
+            </Linknew>
           </Button>
           <Button
             variant="outlined"
@@ -61,7 +68,12 @@ const Navbar = () => {
             color="warning"
             sx={{ my: 1, mx: 1 }}
           >
-            <Linknew style={{textDecoration: "none", color: "#f57c00"}} to="/login">Login</Linknew>
+            <Linknew
+              style={{ textDecoration: "none", color: "#f57c00" }}
+              to="/login"
+            >
+              Login
+            </Linknew>
           </Button>
         </>
       );
