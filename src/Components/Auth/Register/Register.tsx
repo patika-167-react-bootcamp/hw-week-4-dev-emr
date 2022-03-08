@@ -1,5 +1,9 @@
 import * as React from "react";
-import { Dispatch, SetStateAction, FunctionComponent } from "react";
+import useForm from "./useForm";
+import axios from "../../../api/axios";
+import { useFormType } from "./useForm";
+import { useNavigate } from "react-router-dom";
+
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,16 +13,13 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useFormType } from "./useForm";
-import useForm from "./useForm";
-import axios from "../../../api/axios";
-import { useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 const REGISTER_URL = "/auth/register";
 interface props {
   authenticate: any;
   setToken: any;
+  setUsername: any;
 }
 export default function SignUp(props: props) {
   const form: useFormType = useForm();
@@ -28,6 +29,9 @@ export default function SignUp(props: props) {
     !form.values.password?.length ||
     !form.values.passwordConfirm?.length;
 
+  function capitalizeFirstLetter(string: any) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     try {
@@ -42,9 +46,9 @@ export default function SignUp(props: props) {
           headers: { "Content-Type": "application/json" },
         }
       );
+      const username = capitalizeFirstLetter(response?.data?.name);
       const accessToken = response?.data?.token;
-      const name = response?.data?.username;
-      const id = response?.data?.id;
+      props.setUsername(username);
       props.setToken(accessToken);
       props.authenticate();
       navigate("todos");

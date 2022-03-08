@@ -24,6 +24,9 @@ import axios1 from "../../api/axios";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import SignIn from "../../Components/Auth/Login/Login";
+import { Link } from "react-router-dom";
+import CircleIcon from "@mui/icons-material/Circle";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 const style = {
   position: "absolute" as "absolute",
@@ -50,11 +53,15 @@ const CREATE_STATUS_URL = "/status";
 
 export default function EditStatus(props: props) {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (e: any) => {
+    setSelectedStatus(e.currentTarget.id);
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
   const form: useFormType = useForm();
   const form2: useFormType = useForm();
   const [statusList, setStatusList] = React.useState([] as any[]);
+  const [selectedStatus, setSelectedStatus] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
   const [selectColor, setSelectColor] = React.useState<string>();
   let { id } = useParams();
@@ -84,7 +91,7 @@ export default function EditStatus(props: props) {
       const response = await axios1.post(CREATE_STATUS_URL, data, {
         headers: headers,
       });
-      console.log(response);
+      form.values.title = "";
       setStatusList((prevState) => [...prevState, response.data]);
     } catch (error: any) {
       console.log(error.response.data);
@@ -93,24 +100,20 @@ export default function EditStatus(props: props) {
   const statusButtonValid = !selectColor || !form.values.title;
   const updateStatusButtonValid = !form2.values.title;
   const fetchStatus = async () => {
-    setIsLoading(true);
     const statusRes = await authAxios.get(`status?categoryId=${id}`);
-    console.log(statusRes.data);
     setStatusList(statusRes.data);
     setIsLoading(false);
   };
   const updateStatus = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await axios1.put(
-        `/status/${e.currentTarget.id}`,
-        data1,
-        {
-          headers: headers,
-        }
-      );
-      form2.values.title = "";
+      handleClose();
+      setIsLoading(true);
+      const response = await axios1.put(`/status/${selectedStatus}`, data1, {
+        headers: headers,
+      });
       fetchStatus();
+      form2.values.title = "";
     } catch (error: any) {
       console.log(error.response.data);
     }
@@ -122,7 +125,7 @@ export default function EditStatus(props: props) {
         headers: headers,
       });
       setStatusList(
-        statusList.filter((status: any) => status.id != e.currentTarget.id)
+        statusList.filter((status: any) => status.id != e.target.id)
       );
     } catch (error: any) {
       console.log(error.response.data);
@@ -190,11 +193,15 @@ export default function EditStatus(props: props) {
                       <MenuItem defaultValue="">
                         <em>None</em>
                       </MenuItem>
-                      <MenuItem value="coral">Orange</MenuItem>
-                      <MenuItem value="blue">Blue</MenuItem>
-                      <MenuItem value="hotpink">Pink</MenuItem>
-                      <MenuItem value="lightseagreen">Green</MenuItem>
-                      <MenuItem value="orange">Yellow</MenuItem>
+                      <MenuItem value="#F87171">Red</MenuItem>
+                      <MenuItem value="#FB923C">Orange</MenuItem>
+                      <MenuItem value="#FBBF24">Amber</MenuItem>
+                      <MenuItem value="#A3E635">Lime</MenuItem>
+                      <MenuItem value="#34D399">Emerald</MenuItem>
+                      <MenuItem value="#2DD4BF">Teal</MenuItem>
+                      <MenuItem value="#60A5FA">Blue</MenuItem>
+                      <MenuItem value="#F472B6">Pink</MenuItem>
+                      <MenuItem value="#9CA3AF">Gray</MenuItem>
                     </Select>
                   </FormControl>
                 </div>
@@ -231,44 +238,13 @@ export default function EditStatus(props: props) {
                         <ListItem
                           secondaryAction={
                             <div>
-                              <Button size="medium" onClick={handleOpen}>
+                              <Button
+                                size="medium"
+                                onClick={handleOpen}
+                                id={status.id}
+                              >
                                 Edit status
                               </Button>
-                              <Modal
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
-                              >
-                                <Box sx={style}>
-                                  <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Edit Status"
-                                    name="title"
-                                    autoComplete="email"
-                                    color="warning"
-                                    autoFocus
-                                    onChange={form2.onChange}
-                                    value={form2.values.title}
-                                  />
-
-                                  <Button
-                                    type="submit"
-                                    color="warning"
-                                    id={status.id}
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
-                                    onClick={updateStatus}
-                                    disabled={updateStatusButtonValid}
-                                  >
-                                    EDIT
-                                  </Button>
-                                </Box>
-                              </Modal>
 
                               <Button
                                 onClick={deleteStatus}
@@ -280,13 +256,67 @@ export default function EditStatus(props: props) {
                             </div>
                           }
                         >
+                          <ListItemIcon>
+                            <CircleIcon sx={{ color: `${status.color}` }} />
+                          </ListItemIcon>
                           <ListItemText primary={status.title} />
                         </ListItem>
                       );
                     })}
                   </List>
+                  <Modal
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={style}>
+                      <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        id="email"
+                        label="Edit Status"
+                        name="title"
+                        autoComplete="email"
+                        color="warning"
+                        autoFocus
+                        onChange={form2.onChange}
+                        value={form2.values.title}
+                      />
+
+                      <Button
+                        type="submit"
+                        color="warning"
+                        fullWidth
+                        variant="contained"
+                        sx={{ mt: 3, mb: 2 }}
+                        onClick={updateStatus}
+                        disabled={updateStatusButtonValid}
+                      >
+                        EDIT
+                      </Button>
+                    </Box>
+                  </Modal>
                 </Box>
               </Box>
+              <Link
+                to="/editcategory"
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  fullWidth
+                  color="warning"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2, mx: 1 }}
+                >
+                  Back to Categories
+                </Button>
+              </Link>
             </Container>
           </ThemeProvider>
         </>

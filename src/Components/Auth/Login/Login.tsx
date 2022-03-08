@@ -23,12 +23,16 @@ const theme = createTheme();
 interface props {
   authenticate: any;
   setToken: any;
+  setUsername: any;
 }
 
 export default function SignIn(props: props) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
   const form: useFormType = useForm();
+  function capitalizeFirstLetter(string: any) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsLoading(true);
@@ -45,8 +49,8 @@ export default function SignIn(props: props) {
       );
       console.log(response.data);
       const accessToken = response?.data?.token;
-      const name = response?.data?.username;
-      const id = response?.data?.id;
+      const username = capitalizeFirstLetter(response?.data?.username);
+      props.setUsername(username);
       props.setToken(accessToken);
       props.authenticate();
       navigate("/todos");

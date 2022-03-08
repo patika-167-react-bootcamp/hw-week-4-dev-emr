@@ -75,7 +75,7 @@ export default function CreateTodo(props: props) {
       props.setTodos((prevState) => [...prevState, response.data]);
       props.setRenderTodos((prevState) => [...prevState, response.data]);
       const res: any = await authAxios.get(`/status/${response.data.statusId}`);
-      props.setStatuses((prevState) => [...prevState, response.data]);
+      props.setStatuses((prevState) => [...prevState, res.data]);
     } catch (error: any) {
       console.log(error.response.data);
     }

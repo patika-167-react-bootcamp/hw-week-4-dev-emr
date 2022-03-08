@@ -17,11 +17,12 @@ import {
 
 function App() {
   const [user, setUser] = useState(false);
+  const [username, setUsername] = useState();
   const [token, setToken] = useState();
   return (
     <>
       <Router>
-        <Navbar user={user} logout={() => setUser(false)} />
+        <Navbar user={user} username={username} logout={() => setUser(false)} />
 
         <Routes>
           {!user && (
@@ -32,6 +33,7 @@ function App() {
                   <SignIn
                     authenticate={() => setUser(true)}
                     setToken={setToken}
+                    setUsername={setUsername}
                   />
                 }
               />
@@ -42,6 +44,7 @@ function App() {
                   <SignUp
                     authenticate={() => setUser(true)}
                     setToken={setToken}
+                    setUsername={setUsername}
                   />
                 }
               />

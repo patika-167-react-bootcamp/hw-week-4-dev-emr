@@ -1,16 +1,14 @@
 import * as React from "react";
-import { Dispatch, SetStateAction, FunctionComponent } from "react";
+import "./Navbar.css";
+import { Link as Linknew } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import GlobalStyles from "@mui/material/GlobalStyles";
-import "./Navbar.css";
 import CheckIcon from "@mui/icons-material/Check";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Link from "@mui/material/Link";
-import { Link as Linknew } from "react-router-dom";
 
 const theme = createTheme({
   typography: {
@@ -19,20 +17,14 @@ const theme = createTheme({
     },
   },
 });
+
 interface props {
   user: boolean;
   logout: any;
+  username: any;
 }
-const Navbar = (props: props) => {
-  const username: string | null = window.localStorage.getItem("name");
-  const logout = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    window.localStorage.removeItem("token");
-    window.localStorage.removeItem("name");
-    window.localStorage.removeItem("id");
-    window.location.pathname = "/login";
-  };
 
+const Navbar = (props: props) => {
   function conditionalRender() {
     if (props.user) {
       return (
@@ -42,7 +34,7 @@ const Navbar = (props: props) => {
           onClick={props.logout}
           sx={{ my: 1 }}
         >
-          Logout
+          Logout from {props.username}
         </Button>
       );
     }
@@ -100,9 +92,13 @@ const Navbar = (props: props) => {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              <Link href="/todos" underline="none" color="inherit">
+              <Linknew
+                to="/todos"
+                style={{ color: "inherit", textDecoration: "inherit" }}
+              >
                 <span className="header-logo">TO-DO APP</span>
-              </Link>
+              </Linknew>
+
               <CheckIcon fontSize="small" style={{ verticalAlign: "middle" }} />
             </Typography>
             {conditionalRender()}

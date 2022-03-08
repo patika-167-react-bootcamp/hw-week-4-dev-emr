@@ -22,6 +22,7 @@ import IconButton from "@mui/material/IconButton";
 import TodoFilter from "./TodoFilter";
 import LoadingIcon from "../Components/LoadingIcon/LoadingIcon";
 import { Link } from "react-router-dom";
+import axios1 from "../api/axios";
 
 export interface TodoList {
   title: string;
@@ -60,6 +61,10 @@ function TodoPage(props: props) {
       Authorization: `Bearer ${props.token}`,
     },
   });
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${props.token}`,
+  };
   React.useEffect(() => {
     let abortController = new AbortController();
     fetchData();
@@ -67,7 +72,18 @@ function TodoPage(props: props) {
       abortController.abort();
     };
   }, []);
-
+  const deleteTodo = async (e: any) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      const response = await axios1.delete(`/todo/${e.currentTarget.id}`, {
+        headers: headers,
+      });
+      fetchData();
+    } catch (error: any) {
+      console.log(error.response);
+    }
+  };
   const fetchData = async () => {
     const categoryRes = await authAxios.get("/category");
     setCategories(categoryRes.data);
@@ -81,7 +97,6 @@ function TodoPage(props: props) {
         authAxios.get(`/status/${todo.statusId}`),
       ];
     });
-    console.log(promiseArray);
     const statusRed = await Promise.allSettled(promiseArray);
     const statuses: any = await statusRed;
     for (let i = 0; i < promiseArray.length; i++) {
@@ -91,8 +106,6 @@ function TodoPage(props: props) {
     }
     setIsLoading(false);
   };
-
-  const statesValid = !todos.length || !categories.length;
 
   function conditionalTodoPageRender() {
     if (isLoading) {
@@ -106,6 +119,7 @@ function TodoPage(props: props) {
             todos={todos}
             categories={categories}
             statuses={statuses}
+            token={props.token}
           />
           <CreateTodo
             setTodos={setTodos}
@@ -168,7 +182,9 @@ function TodoPage(props: props) {
                                 }
                                 variant="outlined"
                               />
-                            ) : null}
+                            ) : (
+                              <Box />
+                            )}
 
                             {statuses.find(
                               (status: any) => status.id == item.statusId
@@ -189,10 +205,17 @@ function TodoPage(props: props) {
                                   }`,
                                 }}
                               />
-                            ) : null}
+                            ) : (
+                              <Box />
+                            )}
 
-                            <IconButton edge="end" aria-label="delete">
-                              <DeleteIcon />
+                            <IconButton
+                              onClick={deleteTodo}
+                              id={`${item.id}`}
+                              edge="end"
+                              aria-label="delete"
+                            >
+                              <DeleteIcon id={`${item.id}`} />
                             </IconButton>
                           </Stack>
                         }
@@ -234,18 +257,22 @@ function TodoPage(props: props) {
                   alignItems: "center",
                 }}
               >
-                <Button
-                  fullWidth
-                  variant="contained"
-                  sx={{ mt: 3, mb: 2, mx: 1 }}
+                <Link
+                  to="/editcategory"
+                  style={{
+                    textDecoration: "none",
+                    color: "white",
+                    width: "100%",
+                  }}
                 >
-                  <Link
-                    to="/editcategory"
-                    style={{ textDecoration: "none", color: "white" }}
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2, mx: 1 }}
                   >
                     Edit Categories
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </Box>
             </Container>
           </ThemeProvider>

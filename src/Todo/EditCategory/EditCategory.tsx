@@ -16,8 +16,40 @@ import useForm from "./useForm";
 import { useFormType } from "./useForm";
 import axios1 from "../../api/axios";
 import { Link } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
 
-const theme = createTheme();
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  boxShadow: 0,
+  p: 4,
+};
+
+const theme = createTheme({
+  typography: {
+    allVariants: {
+      textTransform: "none",
+    },
+  },
+  components: {
+    MuiBackdrop: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "rgba(0,0,0,0.2)",
+        },
+      },
+    },
+  },
+});
 const EDIT_CATEGORY_URL = "/category";
 
 interface category {
@@ -26,12 +58,18 @@ interface category {
 interface props {
   token: any;
 }
-export default function EditCategories(props:props) {
+export default function EditCategories(props: props) {
   const form: useFormType = useForm();
+  const form2: useFormType = useForm();
   const [isLoading, setIsLoading] = React.useState(true);
-  const [secondary, setSecondary] = React.useState(false);
-  const [dense, setDense] = React.useState(false);
   const [categories, setCategories] = React.useState([] as any[]);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = (event: any) => {
+    setSelectedCategory(event.currentTarget.id);
+    setOpen(true);
+  };
+  const handleClose = () => setOpen(false);
+  const [selectedCategory, setSelectedCategory] = React.useState();
   const authAxios = axios.create({
     baseURL: "http://localhost:80/",
     headers: {
@@ -45,6 +83,10 @@ export default function EditCategories(props:props) {
   const data = {
     title: form.values.title,
   };
+  const data1 = {
+    title: form2.values.title,
+  };
+  const updateCategoryButtonValid = !form2.values.title;
   const fetchCategories = async () => {
     try {
       const res = await authAxios.get("/category");
@@ -54,13 +96,37 @@ export default function EditCategories(props:props) {
       console.log(error.response.data);
     }
   };
-
-  const clickEvent = async (event: any) => {
-    const statusRes = await authAxios.get(
-      `status?categoryId=${event.target.id}`
-    );
+  const updateCategory = async (e: any) => {
+    e.preventDefault();
+    try {
+      handleClose();
+      setIsLoading(true);
+      const response = await axios1.put(
+        `/category/${selectedCategory}`,
+        data1,
+        {
+          headers: headers,
+        }
+      );
+      fetchCategories();
+      form2.values.title = "";
+      console.log(response);
+    } catch (error: any) {
+      console.log(error.response.data);
+    }
   };
-
+  const deleteCategory = async (e: any) => {
+    setIsLoading(true);
+    e.preventDefault();
+    try {
+      const response = await axios1.delete(`/category/${e.currentTarget.id}`, {
+        headers: headers,
+      });
+      fetchCategories();
+    } catch (error: any) {
+      console.log(error.response.data);
+    }
+  };
   const addANewCategoryValid = !form.values.title?.length;
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -68,7 +134,7 @@ export default function EditCategories(props:props) {
       const response = await axios1.post(EDIT_CATEGORY_URL, data, {
         headers: headers,
       });
-      console.log(response);
+      form.values.title = "";
       setCategories((prevState) => [...prevState, response.data]);
     } catch (error: any) {
       console.log(error.response.data);
@@ -143,38 +209,114 @@ export default function EditCategories(props:props) {
                 }}
               >
                 <Box sx={{ flexGrow: 1, width: 1 }}>
-                  <List dense={dense}>
+                  <List>
                     {categories.map((category) => {
                       return (
-                        <ListItem
-                          key={category.id}
-                          secondaryAction={
-                            <ThemeProvider theme={theme}>
-                              <Button
-                                id={category.id}
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2, mx: 1 }}
-                                color="warning"
-                                onClick={clickEvent}
-                              >
-                                <Link to={`/editstatus/${category.id}`} style={{ textDecoration: "none", color: "white" }}>
-                                  Edit Status
+                        <>
+                          <ListItem
+                            key={category.id}
+                            secondaryAction={
+                              <ThemeProvider theme={theme}>
+                                <Link
+                                  to={`/editstatus/${category.id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "white",
+                                  }}
+                                >
+                                  <Button
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2, mx: 1 }}
+                                    color="warning"
+                                  >
+                                    Edit Status
+                                  </Button>
                                 </Link>
-                              </Button>
-                            </ThemeProvider>
-                          }
-                        >
-                          <ListItemText
-                            primary={category.title}
-                            secondary={secondary ? "Secondary text" : null}
-                          />
-                        </ListItem>
+                              </ThemeProvider>
+                            }
+                          >
+                            <ListItemIcon>
+                              <IconButton
+                                onClick={handleOpen}
+                                edge="end"
+                                aria-label="delete"
+                                id={category.id}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                            </ListItemIcon>
+
+                            <ListItemIcon>
+                              <IconButton
+                                edge="end"
+                                aria-label="delete"
+                                id={category.id}
+                                onClick={deleteCategory}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </ListItemIcon>
+                            <ListItemText
+                              primary={category.title}
+                            ></ListItemText>
+                          </ListItem>
+                        </>
                       );
                     })}
                   </List>
                 </Box>
+                <Modal
+                  open={open}
+                  onClose={handleClose}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <TextField
+                      margin="normal"
+                      required
+                      fullWidth
+                      id="email"
+                      label="Edit Category"
+                      name="title"
+                      autoComplete="email"
+                      color="warning"
+                      autoFocus
+                      onChange={form2.onChange}
+                      value={form2.values.title}
+                    />
+
+                    <Button
+                      type="submit"
+                      color="warning"
+                      fullWidth
+                      variant="contained"
+                      sx={{ mt: 3, mb: 2 }}
+                      onClick={updateCategory}
+                      disabled={updateCategoryButtonValid}
+                    >
+                      EDIT
+                    </Button>
+                  </Box>
+                </Modal>
               </Box>
+              <Link
+                to="/todos"
+                style={{
+                  textDecoration: "none",
+                  color: "white",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2, mx: 1 }}
+                >
+                  Back to Todos
+                </Button>
+              </Link>
             </Container>
           </ThemeProvider>
         </>

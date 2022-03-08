@@ -20,6 +20,7 @@ interface props {
   renderTodos: any[];
   todos: any[];
   statuses: any[];
+  token: any
 }
 
 export default function TodoFilter(props: props) {
@@ -29,13 +30,13 @@ export default function TodoFilter(props: props) {
   const accessToken = localStorage.getItem("token");
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer ${props.token}`,
   };
 
   const authAxios = axios1.create({
     baseURL: "http://localhost:80/",
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${props.token}`,
     },
   });
 
