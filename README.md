@@ -13,7 +13,7 @@ For CRUD operations the library axios is used.
 
 For styling Material-UI component library is used.
 
-The backend runs on an Express server that is running on a local Docker port. 
+The backend runs on an Express server (provided by instructor) that is running on a local Docker port. 
 
 ![Screen Shot 2022-03-08 at 21 27 34](https://user-images.githubusercontent.com/79794230/157304435-de6a4242-f710-46b7-b2c3-aca80602f23c.png)
 
