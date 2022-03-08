@@ -1,12 +1,18 @@
 PATIKA REACT BOOTCAMP WEEK-4 HOMEWORK-3
 
+
 For this project a To-do list app created with respect to the API that is given.
+
 
 This app lets authorized users create categories with corresponding status lists (with color code) and assign to-dos to keep track of what's going on with life.
 
+
 On the frontend Typescript + React is used.
+
 For CRUD operations the library axios is used.
+
 For styling Material-UI component library is used.
+
 The backend runs on an Express server that is running on a local Docker port. 
 
 ![Screen Shot 2022-03-08 at 21 27 34](https://user-images.githubusercontent.com/79794230/157304435-de6a4242-f710-46b7-b2c3-aca80602f23c.png)
